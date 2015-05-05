@@ -4,9 +4,17 @@
         <servlet-name>FileUploadServlet</servlet-name>
         <servlet-class>com.cohesion.imgrecog.controller.FileUploadServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>SetSelectionServlet</servlet-name>
+        <servlet-class>com.cohesion.imgrecog.controller.SetSelectionServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>FileUploadServlet</servlet-name>
         <url-pattern>/FileUploadServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>SetSelectionServlet</servlet-name>
+        <url-pattern>/SetSelectionServlet</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

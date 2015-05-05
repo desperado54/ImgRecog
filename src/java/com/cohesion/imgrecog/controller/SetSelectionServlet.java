@@ -5,24 +5,23 @@
  */
 package com.cohesion.imgrecog.controller;
 
-import com.cohesion.imgrecog.utils.FileUploader;
+import com.cohesion.imgrecog.utils.RequestReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.PrintWriter;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.apache.commons.fileupload.FileItemIterator;
-import org.apache.commons.fileupload.FileItemStream;
-import org.apache.commons.fileupload.FileUploadException;
-import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  *
  * @author Calvin He
  */
-public class FileUploadServlet extends HttpServlet {
+public class SetSelectionServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -35,35 +34,19 @@ public class FileUploadServlet extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        boolean isMultiPart = ServletFileUpload.isMultipartContent(request);
-        if(isMultiPart){
-            ServletFileUpload upload = new ServletFileUpload();
-            try{
-                FileItemIterator it = upload.getItemIterator(request);
-                while(it.hasNext()){
-                    FileItemStream item = it.next();
-                    if(item.isFormField()){
-                        String fieldName = item.getFieldName();
-                        InputStream is = item.openStream();
-                        byte[] data = new byte[is.available()];
-                        is.read(data, 0, data.length);
-                        String value = new String(data);
-                        response.getWriter().println(fieldName + ":" + value + "</br>");
-                    }else{
-                        String path = getServletContext().getRealPath("/");
-                        if(FileUploader.process(path, item)){
-                            request.setAttribute("imgPath", String.format("images\\%s", item.getName()));
-                            request.getRequestDispatcher("/processor.jsp").forward(request, response);  
-                        }
-                        else
-                            response.getWriter().println("file upload failed.");
-                                
-                    }
-                }
-            }catch(FileUploadException e){
-                
-            }
+        JSONObject param = RequestReader.ToJsonObject(request);
+        try {
+            param.getLong("left");
+        } catch (JSONException ex) {
+            Logger.getLogger(SetSelectionServlet.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        try {
+            JSONObject json = new JSONObject().put("data", "mm");
+            response.setContentType("application/json");
+            response.getWriter().write(json.toString());
+        } catch (JSONException ex) {
+            Logger.getLogger(SetSelectionServlet.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
